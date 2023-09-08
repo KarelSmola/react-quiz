@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import WelcomePage from "./components/WelcomePage";
 import ProgressBar from "./components/ProgressBar";
 import Questions from "./components/Questions";
+import FinishScreen from "./components/FinishScreen";
 
 const initialState = {
   questions: [],
@@ -24,7 +25,12 @@ const reducer = (state, action) => {
   }
 
   if (action.type === "NEXT_QUESTION") {
-    return { ...state, index: state.index++, answer: false };
+    return {
+      ...state,
+      status: state.questions.length - 1 === state.index ? "end" : state.status,
+      index: state.index + 1,
+      answer: false,
+    };
   }
 
   if (action.type === "ANSWER") {
@@ -40,6 +46,17 @@ const reducer = (state, action) => {
     };
   }
 
+  if (action.type === "RESET_QUIZ") {
+    return {
+      ...state,
+      status: "dataLoaded",
+      error: false,
+      index: 0,
+      answer: false,
+      totalPoints: 0,
+    };
+  }
+
   if (action.type === "ERROR") {
     return { ...state, status: "error", error: action.payload };
   }
@@ -52,6 +69,7 @@ const App = () => {
   const { questions, status, error, index, answer, totalPoints } = state;
 
   const numOfQuestions = questions.length;
+  const maxPoints = questions.reduce((start, curr) => start + curr.points, 0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,7 +78,7 @@ const App = () => {
 
         if (!response.ok) throw new Error("Something went wrong");
         const data = await response.json();
-        console.log(data);
+
         dispatch({ type: "DATA_LOADED", payload: data });
       } catch (error) {
         dispatch({ type: "ERROR", payload: error.message });
@@ -84,14 +102,23 @@ const App = () => {
             index={index}
             totalQuestions={numOfQuestions}
             totalPoints={totalPoints}
+            maxPoints={maxPoints}
           />
           <Questions
             questions={questions}
             index={index}
             dispatch={dispatch}
             answer={answer}
+            totalQuestions={numOfQuestions}
           />
         </>
+      )}
+      {status === "end" && (
+        <FinishScreen
+          dispatch={dispatch}
+          totalPoints={totalPoints}
+          maxPoints={maxPoints}
+        />
       )}
     </MainWrapper>
   );

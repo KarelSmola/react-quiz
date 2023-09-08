@@ -3,7 +3,7 @@ import React from "react";
 import Button from "../UI/Button";
 import classes from "./Questions.module.css";
 
-const Questions = ({ dispatch, questions, index, answer }) => {
+const Questions = ({ dispatch, questions, index, answer, totalQuestions }) => {
   const correctOption = questions[index].correctOption;
 
   return (
@@ -21,7 +21,6 @@ const Questions = ({ dispatch, questions, index, answer }) => {
             }
             key={option}
             onClick={() => {
-              console.log(i);
               dispatch({ type: "ANSWER", payload: i });
             }}
           >
@@ -35,7 +34,7 @@ const Questions = ({ dispatch, questions, index, answer }) => {
             dispatch({ type: "NEXT_QUESTION" });
           }}
         >
-          next
+          {index + 1 === totalQuestions ? "Finish quiz" : "Next"}
         </Button>
       )}
     </div>
