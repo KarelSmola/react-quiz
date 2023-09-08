@@ -1,0 +1,20 @@
+.answers {
+  display: flex;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.btn,
+.btn-correct,
+.btn-standard {
+  background-color: #ccc;
+}
+
+.btn-correct {
+  background-color: orangered;
+  transform: translateY(-0.5rem);
+}
+
+.btn-standard {
+  background-color: blue;
+}
